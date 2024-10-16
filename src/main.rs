@@ -64,12 +64,11 @@ async fn main() {
     for _j in 0..n_objects {
         let mut color = WHITE;
 
-
         let _pos = vec2(rand::gen_range(-0.5, 0.5), rand::gen_range(-0.5, 0.5));
         let _t = _pos.y.atan2(_pos.x);
         if _t > 1.0 {
             color = Color::new(0.9296875, 0.5078125, 0.9296875, 1.0);
-        } 
+        }
         let o = Object {
             mass: rand::gen_range(0.25, 1.0),
             pos: _pos,
@@ -90,12 +89,10 @@ async fn main() {
     let mut grabbed = true;
     let mut last_mouse_position: Vec2 = mouse_position().into();
 
-
     let render_target = render_target(320, 150);
     render_target.texture.set_filter(FilterMode::Nearest);
     loop {
         clear_background(BLACK);
-
 
         // let mouse_position: Vec2 = mouse_position().into();
         // let r = 1.0;
@@ -109,7 +106,6 @@ async fn main() {
         //     target: vec3(0.0, 0.0, 0.0),
         //     ..Default::default()
         // });
-
 
         for i in 0..objects.len() {
             let pos_s = space_to_screen(objects[i].pos);
@@ -209,12 +205,13 @@ mod tests {
             pos: Vec2::new(0.0, 0.0),
             vel: Vec2::new(0.0, 0.0),
             mass: 1.0,
-            
+            color: WHITE,
         };
         let obj2 = Object {
             pos: Vec2::new(3.0, 4.0),
             vel: Vec2::new(0.0, 0.0),
             mass: 1.0,
+            color: WHITE,
         };
         let expected_distance_sq = 25.0; // (3^2 + 4^2)
         let result = distance_sq(&obj1, &obj2);
@@ -228,11 +225,13 @@ mod tests {
             pos: Vec2::new(0.0, 0.0),
             vel: Vec2::new(0.0, 0.0),
             mass: 5.0,
+            color: WHITE,
         };
         let obj2 = Object {
             pos: Vec2::new(3.0, 4.0),
             vel: Vec2::new(0.0, 0.0),
             mass: 10.0,
+            color: WHITE,
         };
         let dist_sq = distance_sq(&obj1, &obj2);
         let expected_force_mag = G * obj1.mass * obj2.mass / dist_sq;
