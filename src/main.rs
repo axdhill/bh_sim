@@ -2,8 +2,6 @@ use macroquad::prelude::*;
 mod bhtree;
 mod util;
 use crate::util::Object;
-use image::{ImageBuffer, Rgba};
-use std::fs;
 
 const G: f32 = 6.6743E-6; // N * m^2 / kg^2
 const PIXEL_DENSITY: f32 = 600.0;
@@ -27,7 +25,7 @@ fn space_to_screen(pos: Vec2) -> Vec2 {
     vec2(x, y)
 }
 fn distance_sq(obj1: &Object, obj2: &Object) -> f32 {
-    return (obj1.pos.x - obj2.pos.x).powf(2.0) + (obj1.pos.y - obj2.pos.y).powf(2.0);
+    (obj1.pos.x - obj2.pos.x).powf(2.0) + (obj1.pos.y - obj2.pos.y).powf(2.0)
 }
 
 fn force_between(obj1: &Object, obj2: &Object) -> Vec2 {
@@ -36,7 +34,7 @@ fn force_between(obj1: &Object, obj2: &Object) -> Vec2 {
         mag = 0.01;
     }
     let dir = (obj1.pos - obj2.pos).normalize();
-    return -mag * dir;
+    -mag * dir
 }
 
 fn draw_arrow(origin: Vec2, displacement: Vec2) {
@@ -51,7 +49,7 @@ fn draw_arrow(origin: Vec2, displacement: Vec2) {
 }
 
 fn in_screen(x: Vec2) -> bool {
-    return (x.x > 0.0) & (x.y > 0.0) & (x.x < WIDTH as f32) & (x.y < HEIGHT as f32);
+    (x.x > 0.0) & (x.y > 0.0) & (x.x < WIDTH as f32) & (x.y < HEIGHT as f32)
 }
 
 #[macroquad::main(window_conf)]
@@ -62,50 +60,21 @@ async fn main() {
     let dt = 0.001;
 
     for _j in 0..n_objects {
-        let mut color = WHITE;
-
         let _pos = vec2(rand::gen_range(-0.5, 0.5), rand::gen_range(-0.5, 0.5));
         let _t = _pos.y.atan2(_pos.x);
-        if _t > 1.0 {
-            color = Color::new(0.9296875, 0.5078125, 0.9296875, 1.0);
-        }
+
         let o = Object {
             mass: rand::gen_range(0.25, 1.0),
             pos: _pos,
             vel: (_pos.y.powf(2.0) + _pos.x.powf(2.0)).sqrt() * vec2(-_t.sin(), _t.cos()) / 5.0,
-            color: color,
+            color: WHITE,
         };
         println!("{:?}", o);
         objects.push(o);
     }
 
-    // objects.push(Object { mass: 10.0, pos: vec2(-0.05, 0.0), vel: vec2(0.0,0.01)});
-    // objects.push(Object { mass: 10.0, pos: vec2(0.05, 0.0), vel: vec2(0.0,-0.01)});
-
-    let mut frame_count = 0;
-    let mut iter_count = 0;
-    let mut max_force = 0.0;
-
-    let mut grabbed = true;
-    let mut last_mouse_position: Vec2 = mouse_position().into();
-
-    let render_target = render_target(320, 150);
-    render_target.texture.set_filter(FilterMode::Nearest);
     loop {
         clear_background(BLACK);
-
-        // let mouse_position: Vec2 = mouse_position().into();
-        // let r = 1.0;
-        // let x = r * mouse_position.x.sin() * mouse_position.y.cos();
-        // let y = r * mouse_position.x.sin() * mouse_position.y.sin();
-        // let z = r * mouse_position.x.cos();
-
-        // set_camera(&Camera3D {
-        //     position: vec3(x,y,z),
-        //     up: vec3(0.0, 0.0, 1.0),
-        //     target: vec3(0.0, 0.0, 0.0),
-        //     ..Default::default()
-        // });
 
         for i in 0..objects.len() {
             let pos_s = space_to_screen(objects[i].pos);
@@ -147,26 +116,6 @@ async fn main() {
                 );
             }
         }
-
-        set_default_camera();
-        // let image = get_screen_data();
-
-        // if iter_count % 10 == 0 {
-        //     image.export_png(&format!("frames/frame_{:05}.png", frame_count));
-        //     frame_count += 1;
-        // }
-        // iter_count += 1;
-
-        // draw_texture_ex(
-        //     &render_target.texture,
-        //     0.,
-        //     0.,
-        //     WHITE,
-        //     DrawTextureParams {
-        //         dest_size: Some(vec2(screen_width(), screen_height())),
-        //         ..Default::default()
-        //     },
-        // );
 
         for i in 0..objects.len() {
             let mut force = vec2(0.0, 0.0);

@@ -12,42 +12,42 @@ struct Quad {
 #[allow(dead_code)]
 impl Quad {
     pub fn length(&self) -> f32 {
-        return self.size;
+        self.size
     }
     pub fn contains(&self, x: Vec2) -> bool {
         let disp = self.pos - x;
         let len = self.size;
-        return (disp.x >= 0.0) & (disp.x < len) & (disp.y >= 0.0) & (disp.y < len);
+        (disp.x >= 0.0) & (disp.x < len) & (disp.y >= 0.0) & (disp.y < len)
     }
 
     pub fn nw(&self) -> Quad {
         let new_size = self.size / 2.0;
-        return Quad {
+        Quad {
             size: new_size,
             pos: vec2(self.pos.x, self.pos.y + new_size),
-        };
+        }
     }
 
     pub fn ne(&self) -> Quad {
         let new_size = self.size / 2.0;
-        return Quad {
+        Quad {
             size: new_size,
             pos: vec2(self.pos.x + new_size, self.pos.y + new_size),
-        };
+        }
     }
     pub fn se(&self) -> Quad {
         let new_size = self.size / 2.0;
-        return Quad {
+        Quad {
             size: new_size,
             pos: vec2(self.pos.x, self.pos.y),
-        };
+        }
     }
     pub fn sw(&self) -> Quad {
         let new_size = self.size / 2.0;
-        return Quad {
+        Quad {
             size: new_size,
             pos: vec2(self.pos.x + new_size, self.pos.y),
-        };
+        }
     }
 }
 #[derive(Debug)]
@@ -60,16 +60,16 @@ struct Body {
 #[allow(dead_code)]
 impl Body {
     pub fn inside(&self, q: &Quad) -> bool {
-        return q.contains(self.pos);
+        q.contains(self.pos)
     }
 }
 
 #[allow(dead_code)]
 fn sum_bodies(a: Body, b: Body) -> Body {
-    return Body {
+    Body {
         mass: a.mass + b.mass,
         pos: a.pos * a.mass + b.pos * b.mass,
-    };
+    }
 }
 
 #[derive(Debug)]
@@ -103,7 +103,7 @@ impl BHTree {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_bhtree() {
         let quad = Quad {
