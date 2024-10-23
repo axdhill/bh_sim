@@ -7,6 +7,9 @@ const G: f32 = 6.6743E-6; // N * m^2 / kg^2
 const PIXEL_DENSITY: f32 = 600.0;
 const HEIGHT: i32 = 600;
 const WIDTH: i32 = 800;
+const N_OBJECTS: i32 = 200;
+
+const DT: f32 = 0.001;
 
 fn window_conf() -> Conf {
     Conf {
@@ -55,11 +58,8 @@ fn in_screen(x: Vec2) -> bool {
 #[macroquad::main(window_conf)]
 async fn main() {
     let mut objects = Vec::new();
-    let n_objects = 200;
 
-    let dt = 0.001;
-
-    for _j in 0..n_objects {
+    for _ in 0..N_OBJECTS {
         let _pos = vec2(rand::gen_range(-0.5, 0.5), rand::gen_range(-0.5, 0.5));
         let _t = _pos.y.atan2(_pos.x);
 
@@ -76,11 +76,11 @@ async fn main() {
     loop {
         clear_background(BLACK);
 
-        for i in 0..objects.len() {
-            let pos_s = space_to_screen(objects[i].pos);
-            let c = objects[i].color;
+        for o in &objects {
+            let pos_s = space_to_screen(o.pos);
+            let c = o.color;
             if in_screen(pos_s) {
-                let size = (objects[i].mass).sqrt();
+                let size = (o.mass).sqrt();
                 draw_circle(
                     pos_s.x,
                     pos_s.y,
@@ -125,13 +125,12 @@ async fn main() {
                     force += force_between(&objects[i], &objects[j]);
                 }
             }
-            // draw_arrow(space_to_screen(objects[i].pos), 1000.0*force);
 
-            objects[i].vel.x += force.x / objects[i].mass * dt;
-            objects[i].vel.y += force.y / objects[i].mass * dt;
+            objects[i].vel.x += force.x / objects[i].mass * DT;
+            objects[i].vel.y += force.y / objects[i].mass * DT;
 
-            objects[i].pos.x += objects[i].vel.x * dt;
-            objects[i].pos.y += objects[i].vel.y * dt;
+            objects[i].pos.x += objects[i].vel.x * DT;
+            objects[i].pos.y += objects[i].vel.y * DT;
         }
 
         next_frame().await
